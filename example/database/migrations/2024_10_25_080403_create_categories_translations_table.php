@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('language_id')->constrained('languages')->cascadeOnDelete();
             $table->foreignId('model_id')->constrained('categories')->cascadeOnDelete();
+            $table->string('locale')->nullable();
             $table->string('name')->nullable();
             $table->timestamps();
         });

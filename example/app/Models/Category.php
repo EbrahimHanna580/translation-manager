@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use WeCanSync\LaravelTranslations\Traits\HasTranslations;
+use EbrahimHanna\TranslationManager\Traits\HasTranslations;
 
 class Category extends Model
 {

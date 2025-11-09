@@ -1,19 +1,22 @@
 {
-    "name": "wecansync/laravel-translations",
-    "description": "Manage translations in a seperated table",
+    "name": "ebrahimhanna/translation-manager",
+    "description": "Database-driven translation management for Laravel applications with automatic locale support and slug generation",
     "license": "MIT",
-    "homepage": "https://github.com/wecansync/laravel-translations",
+    "homepage": "https://github.com/EbrahimHanna580/translation-manager",
     "keywords": [
-        "wecansync",
-        "laravel-translations",
+        "laravel",
         "translations",
-        "laravel"
+        "translation-manager",
+        "i18n",
+        "localization",
+        "multi-language",
+        "database-translations",
+        "eloquent"
     ],
     "authors": [
         {
             "name": "Ebrahim Hanna",
-            "email": "info@wecansync.com",
-            "homepage": "https://wecansync.com/",
+            "email": "ebrahimhanna580@gmail.com",
             "role": "Software Developer"
         }
     ],
@@ -22,13 +25,13 @@
     },
     "autoload": {
         "psr-4": {
-            "WeCanSync\\LaravelTranslations\\": "src/"
+            "EbrahimHanna\\TranslationManager\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "WeCanSync\\LaravelTranslations\\PackageServiceProvider"
+                "EbrahimHanna\\TranslationManager\\PackageServiceProvider"
             ]
         }
     }

@@ -55,28 +55,29 @@ and their translations.
    
     ```php
     namespace App\Models;
-    
+
     use Illuminate\Database\Eloquent\Model;
-    use WeCanSync\LaravelTranslations\Traits\HasTranslations;
-    
+    use EbrahimHanna\TranslationManager\Traits\HasTranslations;
+
     class Category extends Model
     {
        use HasTranslations;
-   
+
        protected $translation_model = [
             'model' => CategoriesTranslation::class,
-            'translatable' => ['name'],
-        //  'foreign_key' => 'language_id', 
-        //  'owner_key' => 'category_id',
-       
-        //  by default the foreign key name is "language_id"
-        //  and the owner_key name is model_id
-       
-        //  if you would like to replace it for all models
+            'owner_key' => 'category_id',
+        //  'foreign_key' => 'language_id',
+        //  'translations_data_key' => 'translations',
+        //  'locale_column' => 'locale',
+        //  'language_code_column' => 'code',
+        //  'slug' => 'name',
+
+        //  By default the foreign key name is "language_id"
+        //  and the owner_key name is "model_id"
+
+        //  If you would like to replace it for all models
         //  you can change it in config/laravel-translations
-       
-    
-        ]; 
+        ];
     ```
 
 

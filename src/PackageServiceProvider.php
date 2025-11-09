@@ -1,5 +1,5 @@
 <?php
-namespace WeCanSync\LaravelTranslations;
+namespace EbrahimHanna\TranslationManager;
 
 use Illuminate\Support\ServiceProvider;
 

@@ -8,5 +8,5 @@ class CategoriesTranslation extends Model
 {
     protected $table = 'categories_translations';
 
-    protected $fillable = ['model_id', 'language_id', 'name'];
+    protected $fillable = ['model_id', 'language_id', 'locale', 'name'];
 }

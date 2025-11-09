@@ -6,7 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/example/database/factories" isTestSource="false" packagePrefix="Database\Factories\" />
       <sourceFolder url="file://$MODULE_DIR$/example/database/seeders" isTestSource="false" packagePrefix="Database\Seeders\" />
       <sourceFolder url="file://$MODULE_DIR$/example/tests" isTestSource="true" packagePrefix="Tests\" />
-      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" packagePrefix="WeCanSync\LaravelTranslations\" />
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" packagePrefix="EbrahimHanna\TranslationManager\" />
       <excludeFolder url="file://$MODULE_DIR$/example/vendor/brianium/paratest" />
       <excludeFolder url="file://$MODULE_DIR$/example/vendor/brick/math" />
       <excludeFolder url="file://$MODULE_DIR$/example/vendor/carbonphp/carbon-doctrine-types" />
@@ -129,7 +129,7 @@
       <excludeFolder url="file://$MODULE_DIR$/example/vendor/vlucas/phpdotenv" />
       <excludeFolder url="file://$MODULE_DIR$/example/vendor/voku/portable-ascii" />
       <excludeFolder url="file://$MODULE_DIR$/example/vendor/webmozart/assert" />
-      <excludeFolder url="file://$MODULE_DIR$/example/vendor/wecansync/laravel-translations" />
+      <excludeFolder url="file://$MODULE_DIR$/example/vendor/ebrahimhanna/translation-manager" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/composer" />
     </content>
     <orderEntry type="inheritedJdk" />

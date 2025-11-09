@@ -25,4 +25,16 @@ return [
      * This specifies where to look for the array of translations in the request payload.
      */
     'translations_data_key' => 'translations',
+
+    /*
+     * Column name in the languages table that contains the language code/locale.
+     * This field is used to fetch the locale value (e.g., 'en', 'ar', 'fr').
+     */
+    'language_code_column' => 'code',
+
+    /*
+     * Column name in the translation table to store the language locale.
+     * Set to null to disable automatic locale storage.
+     */
+    'locale_column' => 'locale',
 ];

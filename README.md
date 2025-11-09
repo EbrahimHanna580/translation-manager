@@ -1,229 +1,373 @@
-# Laravel Translation Management
-[![Current version](https://img.shields.io/packagist/v/wecansync/laravel-translations.svg?logo=composer)](https://packagist.org/packages/wecansync/laravel-translations)
-[![Monthly Downloads](https://img.shields.io/packagist/dm/wecansync/laravel-translations.svg)](https://packagist.org/packages/wecansync/laravel-translations/stats)
-[![Total Downloads](https://img.shields.io/packagist/dt/wecansync/laravel-translations.svg)](https://packagist.org/packages/wecansync/laravel-translations/stats)
-[![codecov](https://codecov.io/gh/wecansync/laravel-translations/branch/main/graph/badge.svg)](https://codecov.io/gh/wecansync/laravel-translations)
+# Laravel Translation Manager
+
+[![Current version](https://img.shields.io/packagist/v/ebrahimhanna/translation-manager.svg?logo=composer)](https://packagist.org/packages/ebrahimhanna/translation-manager)
+[![Monthly Downloads](https://img.shields.io/packagist/dm/ebrahimhanna/translation-manager.svg)](https://packagist.org/packages/ebrahimhanna/translation-manager/stats)
+[![Total Downloads](https://img.shields.io/packagist/dt/ebrahimhanna/translation-manager.svg)](https://packagist.org/packages/ebrahimhanna/translation-manager/stats)
+[![License](https://img.shields.io/packagist/l/ebrahimhanna/translation-manager.svg)](https://packagist.org/packages/ebrahimhanna/translation-manager)
+[![PHP Version](https://img.shields.io/packagist/php-v/ebrahimhanna/translation-manager.svg)](https://packagist.org/packages/ebrahimhanna/translation-manager)
 
 ## Overview
 
-Laravel Translation Management is a package designed to simplify the management of translations in Laravel applications. It allows you to store translations in a dedicated database table, making it easy to manage multiple languages and update translations as needed.
-
+Laravel Translation Management is a powerful, database-driven translation package that simplifies multi-language content management in Laravel applications. Store translations in dedicated database tables with automatic management through Eloquent events.
 
 ## Features
-- **Database Storage**: Store translations in a dedicated database table for easy management.
-- **Multi-Language Support**: Easily handle translations for multiple languages.
-- **Configurable Keys**: Customize foreign and owner keys as per your application's requirements.
-- **Simple Integration**: Easy to integrate with your existing Laravel models.
+
+- **Database-Driven Translations**: Store translations in dedicated tables for dynamic management
+- **Multi-Language Support**: Handle unlimited languages with ease
+- **Automatic Translation Management**: Translations are saved/updated automatically via Eloquent events
+- **Configurable Architecture**: Customize foreign keys, owner keys, and column names per model
+- **Automatic Slug Generation**: Generate unique slugs from translatable fields
+- **Locale Support**: Automatically store language codes in translation records
+- **Route Skipping**: Selectively disable auto-save on specific routes
+- **Performance Optimized**: Built-in caching for language lookups
+- **Simple Integration**: Just add a trait to your models
+- **Zero Dependencies**: Only requires Laravel/Eloquent
 
 
 ## Installation
-You can install the package via Composer:
+
+Install the package via Composer:
 
 ```bash
-composer require wecansync/laravel-translations
+composer require ebrahimhanna/translation-manager
 ```
 
-Publish config file
+Publish the configuration file:
+
 ```bash
-php artisan vendor:publish --provider="WeCanSync\LaravelTranslations\PackageServiceProvider"
+php artisan vendor:publish --provider="EbrahimHanna\TranslationManager\PackageServiceProvider"
 ```
 
+This will create `config/laravel-translations.php` with default settings.
 
-## Usage
+## Quick Start
 
-# Step 1: Update Your Model 
-In your `Category` model (or any model you wish to manage translations for), add the `HasTranslations` trait and define the `$translation_model` property
+### 1. Create Database Tables
 
- ```php
-    namespace App\Models;
-    
-    use Illuminate\Database\Eloquent\Model;
-    use WeCanSync\LaravelTranslations\Traits\HasTranslations;
-    
-    class ModelName extends Model
-    {
-       use HasTranslations;
-   
-       protected $translation_model = [
-            'model' => TranslationsModelName::class,
-        // Optional: Uncomment to customize foreign and owner keys.
-        //  'foreign_key' => 'language_id', 
-        //  'owner_key' => 'model_name_id',
-        
-        // Optional: Uncomment to customize key name for translations data in the request array.
-        //  'translations_data_key' => 'translations_array'
-        
-       // Optional: Uncomment to skip storing/updating translations for specific routes.
-       //   'skip_routes' => ['route.update', 'route.store', ...]
-       // Use this to update the main model data without affecting translations.
-       // Note: Deleting the model will still remove its associated translations.
-       // Use wildcards like 'route.*' to match multiple routes.
-       
-        // Default values:
-        // foreign_key: "language_id"
-        // owner_key: "model_id"
-        // translations_data_key: "translations"
-       
-        //  if you would like to replace it for all models
-        //  you can change it in config/laravel-translations
-        ]; 
-    }
- ```
+You need three types of tables:
 
-# Step 2: Create Blade Form
-Create a Blade form for adding category translations. The form should include fields for each language you want to support.
-
-Here's an example for English and Arabic:
-
-English language: Use language ID (example: 1).
-
-`translations[1][name]`: English translation of the category name (string)
-
-Arabic language: Use language ID (example: 2).
-
-`translations[2][name]`: Arabic translation of the category name (string)
-
-This ensures the translation fields are correctly linked to their respective language IDs.
-
-
-
-### Example Blade form:
-
-```blade
-<form action="{{ route('categories.store') }}" method="POST">
-   @csrf
-   <label for="code">Code:</label>
-   <input type="text" name="code" required>
-   @foreach($languages as $language)
-        <div class="form-group">
-            <label>Name({{$language->code}})</label>
-            <input type="text" class="form-control" name="translations[{{$language->id}}][name]" >
-        </div>
-    @endforeach
-   
-   <button type="submit">Submit</button>
-</form>
-```
-
-# Step 3: Retrieve Translation Data
-You can easily retrieve translation data using the `getTranslations()` function. This function allows you to fetch translations for a specific field in a specified language.
-
-### Parameters
-
-1. **`languageId`** (*required*):  
-   The ID of the language for which you want to retrieve the translation.
-
-2. **`fieldName`** (*required*):  
-   The name of the field you want to retrieve the translation for.
-
-3. **`key`** (*optional*):
-    - This parameter allows you to fetch translation data using a specific key instead of the default language ID.
-    - Useful when you need to query translations based on a custom identifier.
-
-### Example Usage
-
+**Languages table:**
 ```php
-$translation = $model->getTranslations(1, 'name'); 
-// Retrieves the 'name' translation for language ID 1 (e.g., English).
-
-$translationByCode = $model->getTranslations('en', 'name', 'code'); 
-// Retrieves the 'name' translation using the key 'code' instead of an ID.
+Schema::create('languages', function (Blueprint $table) {
+    $table->id();
+    $table->string('title'); // e.g., "English"
+    $table->string('code');  // e.g., "en"
+    $table->timestamps();
+});
 ```
 
-### Handling Missing Translations
-If a translation does not exist for the specified language or field, the function will return null. You can handle this accordingly in your application:
-
+**Main model table (e.g., products):**
 ```php
-$translation = $category->getTranslations(3, 'name'); // Assuming 3 is the language ID for a non-existent language
+Schema::create('products', function (Blueprint $table) {
+    $table->id();
+    $table->string('sku')->unique();
+    $table->decimal('price', 10, 2);
+    // ... other non-translatable fields
+    $table->timestamps();
+});
+```
 
-if ($translation) {
-    echo "Translation: " . $translation;
-} else {
-    echo "Translation not available.";
+**Translation table (e.g., products_translations):**
+```php
+Schema::create('products_translations', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('language_id')->constrained('languages')->cascadeOnDelete();
+    $table->foreignId('product_id')->constrained('products')->cascadeOnDelete();
+    $table->string('locale')->nullable(); // Auto-filled
+    $table->string('name');               // Translatable field
+    $table->string('slug')->nullable();   // Auto-generated
+    $table->text('description')->nullable();
+    $table->timestamps();
+
+    $table->unique(['language_id', 'product_id']);
+});
+```
+
+### 2. Set Up Your Models
+
+**Main Model (Product.php):**
+```php
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use EbrahimHanna\TranslationManager\Traits\HasTranslations;
+
+class Product extends Model
+{
+    use HasTranslations;
+
+    protected $fillable = ['sku', 'price', 'stock'];
+
+    protected $translation_model = [
+        'model' => ProductTranslation::class,
+        'owner_key' => 'product_id',
+        'slug' => 'name', // Auto-generate slug from 'name' field
+    ];
 }
 ```
-This way, you can manage translations effectively and ensure that your application behaves gracefully when translations are missing.
 
-
-# Step 3: Delete Translation Data
-You can easily delete translation data using the `clearTranslations()` function. This function allows you to delete translations data for a specific model in a specified language.
-
-### Parameters
-
-1. **`languageId`** (*required*):  
-   The ID of the language for which you want to delete the translation.
-
-3. **`key`** (*optional*):
-   This parameter allows you to delete translation data using a specific key instead of the default language ID.
-
-### Example Usage
-
+**Translation Model (ProductTranslation.php):**
 ```php
-$category->clearTranslations(1); 
-// Delete the translations for language ID 1 (e.g., English).
+namespace App\Models;
 
-$category->clearTranslations('en', 'code'); 
-// Delete the translation using the key 'code' instead of an ID.
+use Illuminate\Database\Eloquent\Model;
+
+class ProductTranslation extends Model
+{
+    protected $fillable = [
+        'product_id',
+        'language_id',
+        'locale',
+        'name',
+        'slug',
+        'description',
+    ];
+}
 ```
 
+### 3. Use in Your Application
 
-# Optional: Manage Translation Directly
-You can manage translation data directly when storing multiple records of the main model at the same time using the `withTranslations()` function. This function allows you to store or update translation data for a specific model in a specified language.
+**Store with translations:**
+```php
+// The trait automatically saves translations from the request
+Product::create([
+    'sku' => 'PROD-001',
+    'price' => 99.99,
+]);
 
-## Configuration
-To use `withTranslations()`, ensure your model is configured with the following:
+// Request should contain:
+// translations[1][name] = "English Product Name"
+// translations[1][description] = "English description"
+// translations[2][name] = "اسم المنتج بالعربية"
+// translations[2][description] = "وصف باللغة العربية"
+```
+
+**Retrieve translations:**
+```php
+$product = Product::find(1);
+
+// Get specific field translation
+$englishName = $product->getTranslation(1, 'name');
+// or by language code
+$arabicName = $product->getTranslation('ar', 'name', 'code');
+
+// Get all translations for a language
+$translation = $product->getTranslationsByLanguage(1);
+echo $translation->name;
+echo $translation->description;
+echo $translation->slug; // auto-generated
+
+// Get all translations
+$allTranslations = $product->getAllTranslations;
+```
+
+## Advanced Usage
+
+### Configuration Options
+
+The `$translation_model` property accepts the following options:
 
 ```php
 protected $translation_model = [
-          'skip_routes' => ['categories.update', 'categories.store', ...]
-     ]; 
-]
- ```
-### Parameters
+    // Required
+    'model' => ProductTranslation::class,
 
-1. **`translations`** (*required*):  
-   The translations data array to store or update
+    // Optional - Override global config
+    'foreign_key' => 'language_id',              // FK to languages table
+    'owner_key' => 'product_id',                 // FK to parent model
+    'translations_data_key' => 'translations',   // Request array key
+    'locale_column' => 'locale',                 // Column for language code
+    'language_code_column' => 'code',            // Languages table code column
 
-### Example Usage
-
-#### Storing Translations
-
-```php
-$translations_data = [
-    1 => [
-        'name' => 'English Name',
-    ],
-    2 => [
-        'name' => 'Arabic Name',
-    ]
+    // Optional - Advanced features
+    'slug' => 'name',                            // Auto-generate slug from field
+    'skip_routes' => ['products.update'],        // Skip auto-save on routes
 ];
-
-Category::query()->create($request->validated())->withTranslations($translations_data);
-// Store the translations for language ID 1 (English) and language ID 2 (Arabic).
-```
-#### Updating Translations
-
-```php
-$category = Category::query()->find($category_id)->update($request->validated());
-
-$translations_data = [
-    1 => [
-        'name' => 'Updated English Name',
-    ],
-    2 => [
-        'name' => 'Updated Arabic Name',
-    ]
-];
-
-$category->withTranslations($translations_data);
-// Update the translations for language ID 1 (English) and language ID 2 (Arabic).
 ```
 
-## Security
-If you discover any security-related issues, please report them by emailing info@wecansync.com.
+### Global Configuration
+
+Edit `config/laravel-translations.php`:
+
+```php
+return [
+    'language_model' => 'App\Models\Language',
+    'foreign_key' => 'language_id',
+    'owner_key' => 'model_id',
+    'translations_data_key' => 'translations',
+    'language_code_column' => 'code',
+    'locale_column' => 'locale', // Set to null to disable
+];
+```
+
+### Form Structure
+
+Create forms with nested arrays using language IDs as keys:
+
+```blade
+<form action="{{ route('products.store') }}" method="POST">
+    @csrf
+
+    <!-- Non-translatable fields -->
+    <input type="text" name="sku" required>
+    <input type="number" name="price" step="0.01" required>
+
+    <!-- Translatable fields for each language -->
+    @foreach($languages as $language)
+        <div class="language-section">
+            <h4>{{ $language->title }} ({{ $language->code }})</h4>
+
+            <input type="text"
+                   name="translations[{{ $language->id }}][name]"
+                   placeholder="Product Name">
+
+            <textarea name="translations[{{ $language->id }}][description]"
+                      placeholder="Description"></textarea>
+        </div>
+    @endforeach
+
+    <button type="submit">Create Product</button>
+</form>
+```
+
+### Manual Translation Management
+
+Use `withTranslations()` for batch operations or when routes are skipped:
+
+```php
+// Create product and manually add translations
+$product = Product::create([
+    'sku' => 'PROD-001',
+    'price' => 99.99,
+]);
+
+$product->withTranslations([
+    1 => ['name' => 'English Name', 'description' => 'English description'],
+    2 => ['name' => 'اسم عربي', 'description' => 'وصف عربي'],
+]);
+
+// Method chaining
+Product::create($data)->withTranslations($translations);
+```
+
+### Deleting Translations
+
+```php
+// Delete all translations for a specific language
+$product->clearTranslations(1); // By language ID
+$product->clearTranslations('en', 'code'); // By language code
+
+// Deleting the model cascades to translations
+$product->delete(); // All translations are auto-deleted
+```
+
+### API Methods
+
+```php
+// Get single field translation
+$name = $product->getTranslation(1, 'name');
+$name = $product->getTranslation('en', 'name', 'code');
+
+// Get all fields for a language (returns model or null)
+$translation = $product->getTranslationsByLanguage(1);
+$translation = $product->getTranslationsByLanguage('en', 'code');
+
+// Get all translations (returns HasMany relationship)
+$allTranslations = $product->getAllTranslations;
+
+// Access via Eloquent relationship
+$product->translationRelation()->where('locale', 'en')->get();
+```
+
+## Use Cases
+
+### E-commerce Products
+```php
+protected $translation_model = [
+    'model' => ProductTranslation::class,
+    'owner_key' => 'product_id',
+    'slug' => 'name',
+    'locale_column' => 'locale',
+];
+```
+
+### Blog Posts
+```php
+protected $translation_model = [
+    'model' => PostTranslation::class,
+    'owner_key' => 'post_id',
+    'slug' => 'title',
+];
+```
+
+### Categories with Skip Routes
+```php
+protected $translation_model = [
+    'model' => CategoryTranslation::class,
+    'owner_key' => 'category_id',
+    'skip_routes' => ['categories.quick-update'], // Don't auto-save here
+];
+```
+
+## How It Works
+
+1. **Automatic Saving**: When you save a model, the `saved` event triggers translation management
+2. **Request Extraction**: Translations are extracted from the request using the configured key
+3. **Language Validation**: Each language ID is validated against the languages table (cached)
+4. **Slug Generation**: If configured, unique slugs are generated from the specified field
+5. **Locale Storage**: If enabled, language codes are automatically stored
+6. **Cascade Delete**: When a model is deleted, all translations are removed
+
+## Performance
+
+- **Language Caching**: Language lookups are cached in memory to reduce queries
+- **Bulk Operations**: Use `withTranslations()` for batch inserts/updates
+- **Eager Loading**: Load translations with `->with('translationRelation')`
+
+## Example Application
+
+Check the `/example` directory for a complete working Laravel application with:
+- Categories (basic usage)
+- Products (with slug generation)
+- Posts (with SEO fields)
+- Multiple languages
+- CRUD operations
+
+## Requirements
+
+- PHP >= 8.0
+- Laravel >= 8.0
 
 ## Contributing
-Contributions are welcome! To contribute, please fork the repository and submit a pull request. Make sure to follow the coding standards and include tests for any new features.
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository at [https://github.com/EbrahimHanna580/translation-manager](https://github.com/EbrahimHanna580/translation-manager)
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+Please ensure:
+- Code follows existing patterns and conventions
+- Add tests for new features
+- Update documentation as needed
+
+## Security
+
+If you discover any security-related issues, please report them by emailing ebrahimhanna580@gmail.com instead of using the issue tracker.
+
+## Credits
+
+- [Ebrahim Hanna](https://github.com/EbrahimHanna580)
+- [All Contributors](https://github.com/EbrahimHanna580/translation-manager/contributors)
 
 ## License
-The package is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+The MIT License (MIT). Please see [License File](LICENSE) for more information.
+
+## Support
+
+- **Issues**: [GitHub Issues](https://github.com/EbrahimHanna580/translation-manager/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/EbrahimHanna580/translation-manager/discussions)
+- **Email**: ebrahimhanna580@gmail.com
